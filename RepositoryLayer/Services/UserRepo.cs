@@ -22,6 +22,7 @@ namespace RepositoryLayer.Services
     {
         private FundooDBContext Context;
         private readonly IConfiguration configuration;
+
         public UserRepo(FundooDBContext Context, IConfiguration configuration)
         {
             this.Context = Context;
@@ -31,19 +32,32 @@ namespace RepositoryLayer.Services
 
         public UserEntity UserReg(RegModel registrationModel)
         {
-            UserEntity userEntity = new UserEntity();
-            bool emailExists = Context.Users.Any(x => x.Email == registrationModel.Email);
-            userEntity.FirstName = registrationModel.FirstName;
-            userEntity.LastName = registrationModel.LastName;
-            userEntity.Email = registrationModel.Email;
-            userEntity.Password = EncodePasswordToBase64(registrationModel.Password);
-            userEntity.CreatedAt = DateTime.Now;
-            userEntity.UpdatedAt = DateTime.Now;
-            Context.Users.Add(userEntity);
-            Context.SaveChanges();
-            return userEntity;
-        }
+            try
+            {
+                UserEntity userEntity = new UserEntity();
+                bool emailExists = Context.Users.Any(x => x.Email == registrationModel.Email);
+                userEntity.FirstName = registrationModel.FirstName;
+                userEntity.LastName = registrationModel.LastName;
+                userEntity.Email = registrationModel.Email;
+                userEntity.Password = EncodePasswordToBase64(registrationModel.Password);
+                userEntity.CreatedAt = DateTime.Now;
+                userEntity.UpdatedAt = DateTime.Now;
 
+                if (CheckEmail(registrationModel.Email))
+                {
+                    Context.Users.Add(userEntity);
+                    Context.SaveChanges();
+                    return userEntity;
+                }
+                return null;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+        
         public static string EncodePasswordToBase64(string password)
         {
             try
@@ -55,30 +69,35 @@ namespace RepositoryLayer.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in base64Encode" + ex.Message);
+                throw ex;
+
             }
         }
 
         public string Login(LoginModel loginModel)
         {
-            string EncodedPassword = EncodePasswordToBase64(loginModel.Password);
-            var CheckEmail = Context.Users.FirstOrDefault(e => e.Email == loginModel.Email);
-            if (CheckEmail != null)
+            try
             {
-                var PassWord = Context.Users.FirstOrDefault(e => e.Password == EncodedPassword);
-
-                if (PassWord != null)
+                string EncodedPassword = EncodePasswordToBase64(loginModel.Password);
+                var CheckEmailExist = Context.Users.FirstOrDefault(e => e.Email == loginModel.Email);
+                if (CheckEmailExist != null)
                 {
-                    var token = GenerateToken(CheckEmail.Email, CheckEmail.userID);
-                    return token;
-                }
-                else
-                {
-                    return null;
-                }
+                    var PassWord = Context.Users.FirstOrDefault(e => e.Password == EncodedPassword);
 
+                    if (PassWord != null)
+                    {
+                        var token = GenerateToken(CheckEmailExist.Email, CheckEmailExist.userID);
+                        return token;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+
+                }
+                return null;
             }
-            return null;
+            catch (Exception ex) {throw ex; }
         }
 
         private string GenerateToken(string Email, int ID)
@@ -141,14 +160,38 @@ namespace RepositoryLayer.Services
 
         public ResetPasswordModel ResetPassword( string email, ResetPasswordModel resetPassword)
         {
-            if (resetPassword.ConfirmPassword.Equals(resetPassword.password))
+            try
             {
-                var result = Context.Users.Where(x => x.Email == email).FirstOrDefault();
-                result.Password = EncodePasswordToBase64(resetPassword.password);
-                Context.SaveChanges();
+                if (resetPassword.ConfirmPassword.Equals(resetPassword.password))
+                {
+                    var result = Context.Users.Where(x => x.Email == email).FirstOrDefault();
+                    result.Password = EncodePasswordToBase64(resetPassword.password);
+                    Context.SaveChanges();
+                }
+                return resetPassword;
             }
-            return resetPassword;
+            catch(Exception ex)
+            {
+                throw ex;
+            }
 
         }
+
+        public UserEntity LoginObject(LoginModel loginModel)
+        {
+            try
+            {
+                string EncodedPassword = EncodePasswordToBase64(loginModel.Password);
+                var CheckEmailExist = Context.Users.FirstOrDefault(e => e.Email == loginModel.Email && e.Password == EncodedPassword);
+                if (CheckEmailExist != null)
+                {
+                    return CheckEmailExist;
+                  
+                }
+                return null;
+            }
+            catch (Exception ex) { throw ex; }
+        }
+
     }
 }

@@ -42,7 +42,21 @@ namespace FundooNotes
             services.AddDbContext<FundooDBContext>(x=> x.UseSqlServer( Configuration["ConnectionStrings:FundooConnection"]));
             services.AddTransient<IUserRepo,UserRepo>();
             services.AddTransient<IUserBuisness, UserBuisness>();
+            services.AddTransient<INoteRepo, NoteRepo>();
+            services.AddTransient<INoteBuisness, NoteBuisness>();
+            services.AddTransient<ILabelBuisness,LabelBuisness> ();
+            services.AddTransient<ILabelRepo, LabelRepo>();
+            services.AddTransient<ICollabBuisness, CollabBuisness>();
+            services.AddTransient<ICollabRepo, CollabRepo>();
             services.AddSwaggerGen();
+            services.AddDistributedMemoryCache();
+            services.AddStackExchangeRedisCache(options => { options.Configuration = "localhost:6379"; });
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(120);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
             services.AddMassTransit(x =>
             {
                 x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
@@ -118,6 +132,7 @@ namespace FundooNotes
             }
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseSession();
             app.UseSwagger();
 
             // This middleware serves the Swagger documentation UI

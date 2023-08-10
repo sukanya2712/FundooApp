@@ -13,6 +13,8 @@ namespace BuisnessLayer.Interface
         public bool CheckEmail(string email);
 
         public ResetPasswordModel ResetPassword(string email, ResetPasswordModel resetPassword);
+
+        public UserEntity LoginObject(LoginModel loginModel);
     }
 
 

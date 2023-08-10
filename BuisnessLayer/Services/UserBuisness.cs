@@ -45,5 +45,10 @@ namespace BuisnessLayer.Services
         {
             return user.ResetPassword(email, resetPassword);
         }
+
+        public UserEntity LoginObject(LoginModel loginModel)
+        {
+            return user.LoginObject(loginModel);
+        }
     }
 }
