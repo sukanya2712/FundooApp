@@ -81,5 +81,10 @@ namespace BuisnessLayer.Services
         {
             return iNotes.UploadImage(filePath, notesId, userId);
         }
+
+        public List<NoteEntity> NoteExist(string notetitle, int userId)
+        {
+            return iNotes.NoteExist(notetitle, userId);
+        }
     }
 }

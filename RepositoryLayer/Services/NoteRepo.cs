@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using RepositoryLayer.Migrations;
 
 namespace RepositoryLayer.Services
 {
@@ -248,6 +249,8 @@ namespace RepositoryLayer.Services
         }
 
 
+
+
        /* public ImageUploadResult UploadImage(IFormFile imagePath)
         {
             Account account = new Account(configuration["Cloudinary: CloudName"], configuration["Cloudinary: ApiKey"], configuration["Cloudinary: ApiSecret"]);
@@ -300,6 +303,24 @@ namespace RepositoryLayer.Services
             }
             else { return null; }
         }
+
+        public List<NoteEntity> NoteExist(string notetitle,int userId)
+        {
+            try
+            {
+                
+                List<NoteEntity> notes = this.Context.Notes.Where(x => x.Title == notetitle && x.userID == userId).ToList();
+                if (notes != null)
+                {
+                    return notes;
+                }
+                return null;
+
+            }
+            catch(Exception ex) { throw ex; }   
+        }
+
+
 
     }
 }

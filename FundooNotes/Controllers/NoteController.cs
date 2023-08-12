@@ -377,6 +377,35 @@ namespace FundooNotes.Controllers
             }
        
         }
+
+        [HttpGet("NoteExist")]
+        public ActionResult NoteExist(string notetitle)
+        {
+           
+            try
+            {
+                int userID = Convert.ToInt32(this.User.FindFirst("userId").Value);
+                var result = noteBuisness.NoteExist(notetitle,userID);
+                if (result != null)
+                {
+                    return Ok(new ResponseModel<List<NoteEntity>> { Success = true, Message = "image uploaded", Data = result });
+                }
+                else
+                {
+                    return BadRequest(new ResponseModel<List<NoteEntity>> { Success = false, Message = "not uploaded", Data = result });
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.ToString());
+                throw ex;
+            }
+        }
+
+
+
+
+
     }
 
 
