@@ -388,11 +388,11 @@ namespace FundooNotes.Controllers
                 var result = noteBuisness.NoteExist(notetitle,userID);
                 if (result != null)
                 {
-                    return Ok(new ResponseModel<List<NoteEntity>> { Success = true, Message = "image uploaded", Data = result });
+                    return Ok(new ResponseModel<List<NoteEntity>> { Success = true, Message = "Note Exist", Data = result });
                 }
                 else
                 {
-                    return BadRequest(new ResponseModel<List<NoteEntity>> { Success = false, Message = "not uploaded", Data = result });
+                    return BadRequest(new ResponseModel<List<NoteEntity>> { Success = false, Message = "Note Doesnt exist", Data = result });
                 }
             }
             catch (Exception ex)
