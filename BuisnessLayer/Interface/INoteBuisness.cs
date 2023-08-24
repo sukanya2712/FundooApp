@@ -10,7 +10,7 @@ namespace BuisnessLayer.Interface
         //public NoteEntity NoteReg(NotesModel notesModel,int id);
         public NoteEntity NoteReg(NotesModel notesModel, int userID);
 
-        public List<NoteEntity> GetAllNotes();
+        public List<NoteEntity> GetAllNotes(int UserID);
 
         public bool DeleteNotes();
 

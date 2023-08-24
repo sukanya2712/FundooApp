@@ -27,9 +27,9 @@ namespace BuisnessLayer.Services
             return iNotes.NoteReg(notesModel,userID);
         }
 
-        public List<NoteEntity> GetAllNotes()
+        public List<NoteEntity> GetAllNotes(int UserID)
         {
-            return iNotes.GetAllNotes();
+            return iNotes.GetAllNotes( UserID);
         }
 
         public bool DeleteNotes()

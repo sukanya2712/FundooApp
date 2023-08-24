@@ -69,6 +69,8 @@ namespace FundooNotes
                     });
                 }));
             });
+            services.AddCors();
+            //services.AddControllers();
             services.AddMassTransitHostedService();
             services.AddControllers();
             ConfigureSwagger(services);
@@ -130,6 +132,13 @@ namespace FundooNotes
             {
                 app.UseDeveloperExceptionPage();
             }
+            // global cors policy
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials()); // allow credentials
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSession();

@@ -54,12 +54,22 @@ namespace RepositoryLayer.Services
         }
 
 
-        public List<NoteEntity> GetAllNotes()
+        public List<NoteEntity> GetAllNotes(int UserID)
         {
             try
             {
-                List<NoteEntity> resultNotes = Context.Notes.ToList();
-                return resultNotes;
+                int id = Context.Users.Where(x=>x.userID == UserID).Select(x=> x.userID).FirstOrDefault();
+                bool idExist = Context.Notes.Any(x=>x.userID == id);
+                if (idExist)
+                {
+                    List<NoteEntity> resultNotes = Context.Notes.ToList();
+                    return resultNotes;
+                }
+                else
+                {
+                    return null;
+                }
+               
             }
             catch (Exception ex)
             {
@@ -303,6 +313,8 @@ namespace RepositoryLayer.Services
             }
             else { return null; }
         }
+
+
 
         public List<NoteEntity> NoteExist(string notetitle,int userId)
         {

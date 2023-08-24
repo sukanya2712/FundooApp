@@ -43,8 +43,8 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                //int userID = Convert.ToInt32(this.User.FindFirst("userId").Value);
-                int userID = (int)HttpContext.Session.GetInt32("userId");
+                int userID = Convert.ToInt32(this.User.FindFirst("userId").Value);
+                //int userID = (int)HttpContext.Session.GetInt32("userId");
 
 
                 var result = noteBuisness.NoteReg(model, userID);
@@ -75,7 +75,9 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                var result = noteBuisness.GetAllNotes();
+                int userID = Convert.ToInt32(this.User.FindFirst("userId").Value);
+
+                var result = noteBuisness.GetAllNotes(userID);
                 if (result != null)
                 {
                     logger.LogInformation("getting all the notes");
@@ -347,6 +349,8 @@ namespace FundooNotes.Controllers
         {
             try
             {
+                int userID = Convert.ToInt32(this.User.FindFirst("userId").Value);
+
                 var CacheKey = "NotesList";
                 List<NoteEntity> NoteList;
                 byte[] RedisNoteList = await _cache.GetAsync(CacheKey);
@@ -359,7 +363,7 @@ namespace FundooNotes.Controllers
                 else
                 {
                     logger.LogDebug("setting the list to cache which is requested for the first time");
-                    NoteList = (List<NoteEntity>)noteBuisness.GetAllNotes();
+                    NoteList = (List<NoteEntity>)noteBuisness.GetAllNotes(userID);
                     var SerializedNoteList = JsonConvert.SerializeObject(NoteList);
                     var redisNoteList = Encoding.UTF8.GetBytes(SerializedNoteList);
                     var options = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(10)).SetSlidingExpiration(TimeSpan.FromMinutes(10));

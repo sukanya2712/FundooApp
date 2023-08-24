@@ -43,7 +43,7 @@ namespace RepositoryLayer.Services
                 userEntity.CreatedAt = DateTime.Now;
                 userEntity.UpdatedAt = DateTime.Now;
 
-                if (CheckEmail(registrationModel.Email))
+                if (!emailExists)
                 {
                     Context.Users.Add(userEntity);
                     Context.SaveChanges();
@@ -114,12 +114,9 @@ namespace RepositoryLayer.Services
                 claims,
                 expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: credentials);
-
-
             return new JwtSecurityTokenHandler().WriteToken(token);
 
         }
-
 
         public ForgetPasswordModel UserForgotPassword(string email)
         {
